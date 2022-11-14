@@ -1,13 +1,14 @@
 import dotenv from "dotenv";
 import { login, Status } from "masto";
-import strinptags from "striptags";
-import { put } from "./db";
+import { config } from "./config.js";
+import { put } from "./db.js";
+import { sendWebhook } from "./discord.js";
 dotenv.config();
 
 const main = async () => {
     const masto = await login({
-        url: process.env.HOST + "",
-        accessToken: process.env.TOKEN,
+        url: config.mastodon.host,
+        accessToken: config.mastodon.token,
     });
 
     const myAccount = await masto.accounts.verifyCredentials();
@@ -19,20 +20,22 @@ const main = async () => {
 
     stream.on("update", async (status) => {
         console.log(`Received status: ${status.account.acct}`);
-        if (!statusByAki(status)) {
+        if (!statusByAki(status) && config.debug.estrus === false) {
             return;
         }
 
-        const stripedContent: string = strinptags(status.content);
-        await put({
-            ...status,
-            stripedContent,
-        });
+        await put(status);
+        if (config.discord.useDiscordNotification) {
+            sendWebhook(status);
+        }
         return;
     });
 };
-main();
+main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+});
 
 function statusByAki(status: Status): boolean {
-    return status.account.acct === process.env.VICTIM_ACCT;
+    return status.account.acct === config.mastodon.victimAcct;
 }

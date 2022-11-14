@@ -1,9 +1,7 @@
 import { Status } from "masto";
 import Datastore from "nedb-promises";
 
-export type Log = {
-    stripedContent: string;
-} & Status;
+export type Log = {} & Status;
 
 const db = Datastore.create("data/aki.db");
 

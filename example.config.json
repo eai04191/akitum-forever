@@ -1,0 +1,14 @@
+{
+    "debug": {
+        "estrus": false
+    },
+    "mastodon": {
+        "host": "https://stellaria.network/",
+        "token": "*********",
+        "victimAcct": "victim@example.com"
+    },
+    "discord": {
+        "useDiscordNotification": true,
+        "webhookUrl": "https://discord.com/api/webhooks/AAAAAAAAAAAAA"
+    }
+}
