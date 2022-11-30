@@ -14,6 +14,9 @@ const main = async () => {
     const myAccount = await masto.accounts.verifyCredentials();
     console.log(`I'am @${myAccount.acct}`);
     console.log(`${myAccount.url}`);
+    if (config.discord.useDiscordNotification) {
+        sendWebhook(`I'am @${myAccount.acct}, Monitoring is now active.`);
+    }
 
     console.log("Monitoring stream...");
     const stream = await masto.stream.streamUser();

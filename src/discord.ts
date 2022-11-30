@@ -3,7 +3,13 @@ import { Status } from "masto";
 import { config } from "./config.js";
 import { toMarkdown } from "./util.js";
 
-export function sendWebhook(status: Status) {
+export function sendWebhook(status: Status | string) {
+    if (typeof status === "string") {
+        return post({
+            content: status,
+        });
+    }
+
     const original = status;
     if (status.reblog) {
         status = status.reblog;
@@ -35,7 +41,7 @@ export function sendWebhook(status: Status) {
         if (!media.url) return;
 
         body.embeds?.push({
-            url: status.uri,
+            url: (status as Status).uri,
             image: {
                 url: media.url,
             },
